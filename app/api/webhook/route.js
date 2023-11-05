@@ -1,12 +1,12 @@
-const Stripe = require("stripe"); // Assuming you're using CommonJS module syntax
-const { headers } = require("next/headers");
-const { NextResponse } = require("next/server");
-const prismadb = require("/Projects/graphit/lib/prismadb");
-const { stripe } = require("/Projects/graphit/lib/stripe");
+import Stripe from "stripe";
+import {headers} from "next/headers"
+import { NextResponse } from "next/server";
+import prismadb from "../../../lib/prismadb";
+import { stripe } from "../../../lib/stripe";
 
 export async function POST(req) {
     const body = await req.text()
-    const signature = headers().get("Stripe-Signature") as string
+    const signature = headers().get("Stripe-Signature")
     let event;
     try{
         event = stripe.webhooks.constructEvent(
@@ -16,10 +16,9 @@ export async function POST(req) {
         return new NextResponse(`Webhook Error: ${error.message}`, {status:400})
     }
 
-    const session = event.data.object
-
+    const session = event.data.object 
     if (event.type ==="checkout.session.completed") {
-        const subscription = await stripe.subscriptionItems.retrieve(
+        const subscription = await stripe.subscriptions.retrieve(
             session.subscription
         )
         if (!session?.metadata?.userId) {
@@ -53,5 +52,5 @@ export async function POST(req) {
             }
         })
     }
-    return new NextResponse(null , {status: 200})
+    return new NextResponse(null , {status: 200});
 }

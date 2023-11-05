@@ -4,6 +4,7 @@ import Heading from "/Projects/graphit/components/Heading"
 
 import { LayoutDashboard } from 'lucide-react';
 const GalleryPage = () => {
+  
     const images = [
         { src: '/images/Image1.png', width: 640, height: 480 },
         { src: '/images/Image2.png', width: 640, height: 480 },
