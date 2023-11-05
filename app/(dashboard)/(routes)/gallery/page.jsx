@@ -1,6 +1,6 @@
 import React from 'react'
 import Image from 'next/image';
-import Heading from "/Projects/graphit/components/Heading"
+import Heading from "../../../../components/Heading"
 
 import { LayoutDashboard } from 'lucide-react';
 const GalleryPage = () => {

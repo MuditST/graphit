@@ -1,12 +1,12 @@
 const Stripe = require("stripe"); // Assuming you're using CommonJS module syntax
 const { headers } = require("next/headers");
 const { NextResponse } = require("next/server");
-const prismadb = require("/Projects/graphit/lib/prismadb");
-const { stripe } = require("/Projects/graphit/lib/stripe");
+const prismadb = require("../../../lib/prismadb");
+const { stripe } = require("../../../lib/stripe");
 
 export async function POST(req) {
     const body = await req.text()
-    const signature = headers().get("Stripe-Signature") as string
+    const signature = headers().get("Stripe-Signature")
     let event;
     try{
         event = stripe.webhooks.constructEvent(
