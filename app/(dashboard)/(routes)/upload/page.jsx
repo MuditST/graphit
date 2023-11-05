@@ -14,12 +14,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { uploadSchema } from '../create/constants';
 import axios from 'axios';
 import Image from 'next/image';
+import { useProModal } from '../../../../hooks/use-pro-modal';
 
 const UploadPage = () => {
   const router = useRouter()
   const { user } = useUser()
   const userId = user && user.id
-  
+  const proModal = useProModal();
+
   const form = useForm({
     resolver: zodResolver(uploadSchema),
     defaultValues: {
@@ -34,21 +36,23 @@ const UploadPage = () => {
   // const isLoading = form.formState.isSubmitting
   const onSubmit = async (values) => {
     setIsLoading(true);
-    console.log(values);
     try {
       form.reset({
         image: '',
       });
 
-      axios.post("http://localhost:4000/upload", null, {
+      const response = await axios.post("http://localhost:4000/upload", null, {
         params: { ...values, userId }
-      }).then((response) => {
-        console.log(response);
-        setImages(response.data);
-        setIsLoading(false);
-        router.refresh
       })
+
+      console.log(response);
+      setImages(response.data);
+      setIsLoading(false);
+
     } catch (error) {
+      if (error.response.status === 403) {
+        proModal.onOpen();
+      }
       setIsLoading(false);
     }
     finally {

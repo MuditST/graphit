@@ -13,6 +13,7 @@ import { Button } from '../../../../components/ui/button'
 import { useRouter } from 'next/navigation'
 import { auth, useUser } from "@clerk/nextjs"
 import Image from "next/image"
+import { useProModal } from "../../../../hooks/use-pro-modal"
 
 const CreatePage = () => {
   const router = useRouter()
@@ -27,7 +28,8 @@ const CreatePage = () => {
   })
   const { user } = useUser()
   const userId = user && user.id
-
+  const proModal = useProModal();
+  
   const [images, setImages] = useState([]);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -41,16 +43,16 @@ const CreatePage = () => {
         yval: ''
       });
 
-      axios.post("http://localhost:4000/create", null, {
-        params: { ...values, userId }
-      }).then((response) => {
-        console.log(response);
-        setImages(response.data);
-        setIsLoading(false);
-      })
+      const response = await axios.post("http://localhost:4000/create", null, {params: { ...values, userId }});
+
+      setImages(response.data);
+      setIsLoading(false);
 
     } catch (error) {
-      console.log(error)
+      if (error.response.status === 403) {
+        proModal.onOpen();
+      }
+      setIsLoading(false);
     }
     finally {
       // setIsLoading(false);
